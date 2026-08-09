@@ -37,7 +37,7 @@ public class SudokuSolver {
             }
         }
         //Rule 3: num must not already be in this current 3x3 box.
-        int boxRow = (row/3) * 3; // Top-left row of this cell's box.
+        int boxRow = (row/3) * 3; // Top-left row of this cell's box.a
         int boxCol = (col/3) * 3; // Top-left col of this cell's box.
         for (int r = boxRow; r<boxRow+3; r++) {
             for (int c = boxCol; c < boxCol + 3; c++) {
@@ -50,14 +50,49 @@ public class SudokuSolver {
         return true;
     }
 
+    // Tries to solve the board. Returns true if solved, false if impossible
+    public boolean solve() {
+        for (int row = 0; row < 9; row++) {
+
+            // Step 1: find the next empty cell (a,0)
+            for (int col = 0; col < 9; col++) {
+                if (board[row][col] == 0) {
+                    // an empty cell was found
+                    // Step 2: try each number 1-9 in it
+                    for (int num = 1; num <=9; num++) {
+                        if (isValid(row, col, num)) {
+                            // check if the number is valid here: place it as a guess.
+                            board[row][col]  = num;
+
+                            //Step3: try solving the rest of the board
+                            if (solve()) {
+                                // Board was fully solved
+                                return true;
+                            }
+                            //Step4: it didn't work so undo the guess (backtrack)
+                            board[row][col] = 0;
+                        }
+                    }
+                    // If no number 1-9 worked in the cell, its a dead end
+                    return false;
+                }
+            }
+        }
+        // If whole board is filled and solved:
+        return true;
+    }
+
     public static void main(String[] args) {
         SudokuSolver solver = new SudokuSolver();
-        solver.printBoard();
-        System.out.println();
 
-        // Top-left cell is empty [0][2]. Let's test:
-        System.out.println("Can I put 1 at [0][2]? " + solver.isValid(0,2,1));
-        System.out.println("Can I put 5 at [0][2]? " + solver.isValid(0,2,5));
-        System.out.println("Can I put 7 at [0][2]? " + solver.isValid(0,2,7));
+        System.out.println("Puzzle:");
+        solver.printBoard();
+
+        if(solver.solve()) {
+            System.out.println("\nSolved");
+            solver.printBoard();
+        } else {
+            System.out.println("\nThis puzzle has no solution.");
+        }
     }
 }
