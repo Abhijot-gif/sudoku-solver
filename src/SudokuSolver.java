@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class SudokuSolver {
     // 9x9 grid - 0 represents an empty cell.
     private int[][] board = {
@@ -84,15 +86,40 @@ public class SudokuSolver {
 
     public static void main(String[] args) {
         SudokuSolver solver = new SudokuSolver();
-
         System.out.println("Puzzle:");
+        solver.loadFromInput();
         solver.printBoard();
 
+
+        //Adding a timer to see how long it takes to solve  thesudoku.
+        long startTime = System.nanoTime();
+        boolean solved = solver.solve();
+        long endTime = System.nanoTime();
+
         if(solver.solve()) {
-            System.out.println("\nSolved");
+            System.out.println("\nSolved!");
             solver.printBoard();
         } else {
             System.out.println("\nThis puzzle has no solution.");
+        }
+
+        // convert Nanoseconds to Milliseconds (divide by 1,000,000)
+        double milliseconds = (endTime - startTime) / 1000000;
+        System.out.printf("Solved in %.2f ms%n", milliseconds); // To 2 decimal places.
+    }
+
+
+    //Method to let user input custom puzzle.
+    public void loadFromInput() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the puzzle: 9 rows, each 9 digits (0 = empty): ");
+
+        for (int row = 0; row < 9; row++) {
+            String line = scanner.nextLine(); //Read the next row
+            for (int col = 0; col < 9; col++) {
+                // Convert character into its numeric value
+                board[row][col] = line.charAt(col) - '0';
+            }
         }
     }
 }
