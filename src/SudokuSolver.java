@@ -1,3 +1,4 @@
+import java.lang.classfile.instruction.ReturnInstruction;
 import java.util.Scanner;
 
 public class SudokuSolver {
@@ -90,6 +91,18 @@ public class SudokuSolver {
         solver.loadFromInput();
         solver.printBoard();
 
+        // O solutions: impossible or broken Sudoku.
+        // Exactly 1 solution: well-made Sudoku.
+        // 2 or more solutions: ambiguous, badly-made Sudoku.
+        int solutionCount = solver.countSolutions(2);
+
+        if (solutionCount == 0) {
+            System.out.println("\nPuzzle has no solution");
+        } else if (solutionCount == 1) {
+            System.out.println("\nProper puzzle (exactly one solution).");
+        } else {
+            System.out.println("\nWarning: puzzle has multiple solutions.");
+        }
 
         //Adding a timer to see how long it takes to solve  thesudoku.
         long startTime = System.nanoTime();
@@ -121,5 +134,29 @@ public class SudokuSolver {
                 board[row][col] = line.charAt(col) - '0';
             }
         }
+    }
+    // Counts how many solutions the puzzle has and stops early once it exceeds 'limit'.
+    public int countSolutions(int limit) {
+        for (int row = 0; row < 9; row ++) {
+            for (int col = 0; col < 9; col++) {
+                if (board[row][col] == 0) {
+                    int total = 0;
+
+                    for (int num = 1; num <= 9; num++) {
+                        if (isValid(row,col,num)) {
+                            board[row][col] = num; // Place a guess.
+                            total += countSolutions(limit); //Start counting all solutions from here.
+                            board[row][col] = 0; // Keep exploring for more options.
+
+                            if (total >= limit) { // Stop early once hitting limit
+                                return total;
+                            }
+                        }
+                    }
+                    return total;
+                }
+             }
+        }
+        return 1; // If no empty cells, then the filled board is a complete solution
     }
 }
