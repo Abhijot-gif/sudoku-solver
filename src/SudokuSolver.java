@@ -1,4 +1,4 @@
-import java.lang.classfile.instruction.ReturnInstruction;
+
 import java.util.Scanner;
 
 public class SudokuSolver {
@@ -91,6 +91,11 @@ public class SudokuSolver {
         solver.loadFromInput();
         solver.printBoard();
 
+        if (!solver.isBoardValid()) {
+            System.out.println("\nThis starting board is invalid (a number repeats in a row, column or box).");
+            return; // No point in solving an invalid board.
+        }
+
         // O solutions: impossible or broken Sudoku.
         // Exactly 1 solution: well-made Sudoku.
         // 2 or more solutions: ambiguous, badly-made Sudoku.
@@ -104,12 +109,12 @@ public class SudokuSolver {
             System.out.println("\nWarning: puzzle has multiple solutions.");
         }
 
-        //Adding a timer to see how long it takes to solve  thesudoku.
+        //Adding a timer to see how long it takes to solve the sudoku.
         long startTime = System.nanoTime();
         boolean solved = solver.solve();
         long endTime = System.nanoTime();
 
-        if(solver.solve()) {
+        if(solved) {
             System.out.println("\nSolved!");
             solver.printBoard();
         } else {
@@ -117,7 +122,7 @@ public class SudokuSolver {
         }
 
         // convert Nanoseconds to Milliseconds (divide by 1,000,000)
-        double milliseconds = (endTime - startTime) / 1000000;
+        double milliseconds = (endTime - startTime) / 1_000_000.0;
         System.out.printf("Solved in %.2f ms%n", milliseconds); // To 2 decimal places.
     }
 
@@ -158,5 +163,24 @@ public class SudokuSolver {
              }
         }
         return 1; // If no empty cells, then the filled board is a complete solution
+    }
+
+    // Checks the input/start board is valid (no duplicate clues in any row/col/box)
+    public boolean isBoardValid() {
+        for (int row = 0; row < 9; row++) {
+            for(int col = 0; col < 9; col ++) {
+
+                int num = board[row][col];
+                if (num!=0) {
+                    board[row][col] = 0;
+                    if (!isValid(row,col,num)) { // ...is 'num' legal here?.
+                        board[row][col] = num; //Put it back before returning.
+                        return false;
+                    }
+                    board[row][col] = num; //If it is fine, put it back.
+                }
+            }
+        }
+        return true; //Every clue is valid.
     }
 }
