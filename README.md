@@ -18,15 +18,19 @@ backtracking algorithm — and reports how long it took to solve.
 
 1. Compile and run `SudokuSolver.java` (Java 25).
 2. When prompted, enter the puzzle as 9 lines of 9 digits, using `0` for empty cells:
-   530070000
-   600195000
-   098000060
-   800060003
-   400803001
-   700020006
-   060000280
-   000419005
-   000080079
+
+```
+530070000
+600195000
+098000060
+800060003
+400803001
+700020006
+060000280
+000419005
+000080079
+```
+
 3. The program prints the puzzle, diagnoses it and then prints the solved grid and solve time.
 
 ## How it works
